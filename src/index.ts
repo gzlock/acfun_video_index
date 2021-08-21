@@ -32,12 +32,15 @@ async function main() {
         '小明星大跟班': list.filter(feed => feed.title.includes('小明星') || feed.title.includes('大跟班')),
     }
     const time = dayjs().format('YYYY-MM-DD HH:mm:ss')
-    let content = `### 此列表在 ${time} 自动生成\n\n`
+    let content = `此列表在 ${time} 自动生成\n\n
+由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n`
     Object.keys(categories).forEach(key => {
         content += `# ${key}\n\n`
         // @ts-ignore
         content += categories[key].map(feed => {
-            return `### ${feed.title} [播放](${feed.shareUrl})\n\n<img src="${feed.coverUrl}" height="200px"/>\n\n${feed.description}\n\n`
+            return `### ${feed.title} <a target="_blank" href="${feed.shareUrl}">播放</a>\n\n` +
+                `<img src="${feed.coverUrl}" height="200px"/>\n\n` +
+                `${feed.description}\n\n`
         }).join('')
     })
     try {

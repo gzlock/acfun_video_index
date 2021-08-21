@@ -1,5 +1,4 @@
 import axios, {AxiosResponse} from "axios";
-import headers from '../headers.json'
 
 export enum ContributeListStatus {
     all,
@@ -22,5 +21,9 @@ export function queryContributeList<T>(
     page = page >= 0 ? page : 0
     return axios.post<T>('https://member.acfun.cn/list/api/queryContributeList',
         `pcursor=${page}&resourceType=2&sortType=3&authorId=${authorId}&status=${status}`,
-        {headers})
+        {
+            headers: {
+                cookie: process.env.ACFUN_COOKIES
+            }
+        })
 }
