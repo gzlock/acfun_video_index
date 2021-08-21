@@ -53,13 +53,13 @@ async function main() {
     console.log('生成README.md文件')
     fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), content)
 
-    console.log('git status:', execSync(`cd ${acfunVideoIndexDir} && git status`).toString())
+    console.log('git status:', execSync(`cd ${acfunVideoIndexDir} && git status -s`).toString())
 
     execSync(`cd ${acfunVideoIndexDir} && git config user.name gzlock`)
     execSync(`cd ${acfunVideoIndexDir} && git config user.email srleo@qq.com`)
 
     await new Promise((resolve, reject) => {
-        exec(`cd ${acfunVideoIndexDir} && git commit -a -m '自动生成${time}'`, (err, stdout, stderr) => {
+        exec(`cd ${acfunVideoIndexDir} && git commit -am '自动生成${time}'`, (err, stdout, stderr) => {
             if (err) return reject(stdout)
             resolve(stdout)
         })
