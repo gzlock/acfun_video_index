@@ -4,6 +4,9 @@ import * as fs from "fs";
 import {exec, execSync, spawnSync} from "child_process";
 import path from "path";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc)
 
 const cwd = process.cwd()
 const outputDir = path.join(cwd, 'output')
@@ -31,7 +34,7 @@ async function main() {
         '综艺大热门': list.filter(feed => feed.title.includes('大热门')),
         '小明星大跟班': list.filter(feed => feed.title.includes('小明星') || feed.title.includes('大跟班')),
     }
-    const time = dayjs().format('YYYY-MM-DD HH:mm:ss')
+    const time = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss')
     let content = `此列表在 ${time} 自动生成\n\n
 由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n`
     Object.keys(categories).forEach(key => {
