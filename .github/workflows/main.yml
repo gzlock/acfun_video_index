@@ -8,8 +8,10 @@ on:
   #    branches: [ master ]
   #  pull_request:
   #    branches: [ master ]
-  watch:
-    types: [ started ]
+#  watch:
+#    types: [ started ] # 有人点星星就执行
+  schedule:
+    - cron: '30 * * * *' # 每小时的第30分钟执行
 
 jobs:
   build:
