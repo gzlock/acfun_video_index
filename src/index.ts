@@ -28,7 +28,7 @@ import * as fs from "fs";
         content += `# ${key}\n\n`
         // @ts-ignore
         content += categories[key].map(feed => {
-            return `### ${feed.title} [播放1](${feed.shareUrl})\n\n<img src="${feed.coverUrl}" height="200px"/>\n\n${feed.description}\n\n`
+            return `### ${feed.title} [播放](${feed.shareUrl})\n\n<img src="${feed.coverUrl}" height="200px"/>\n\n${feed.description}\n\n`
         }).join('')
     })
     fs.writeFileSync('./README.md', content)
