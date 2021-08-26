@@ -4,10 +4,11 @@ import {
   queryContributeList,
 } from './queryContributeList'
 import * as fs from 'fs'
-import { exec, execSync, spawnSync } from 'child_process'
+import { exec, execSync } from 'child_process'
 import path from 'path'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { Feed } from './feed'
 
 dayjs.extend(utc)
 
@@ -22,15 +23,13 @@ async function main () {
   let page: any = 0
   while (page != 'no_more') {
     console.log('正在读取', `第${page}页`)
-    const {
-      data: {
-        feed,
-        pcursor,
-      },
-    } = await queryContributeList<ContributeList>(userId, page,
-      ContributeListStatus.verified)
-    page = pcursor
-    list.push(...feed)
+    const { page: current, list: feeds } = await queryContributeList(
+      userId,
+      page,
+      ContributeListStatus.all,
+    )
+    page = current
+    list.push(...feeds)
   }
   console.log('视频总数', list.length)
   const categories: { [key: string]: Feed[] } = {
@@ -43,10 +42,10 @@ async function main () {
   let content = `此列表在 ${time} 自动生成\n\n
 由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n
 分类列表：\n\n
-${Object.keys(categories).map(key=>`- [${key}](./${key}.md)`).join('\n\n')}\n\n
+${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\n
 # 最新上传的10个视频：\n\n`
   for (let i = 0; i < 10; i++) {
-    content += feedToString(list[i])
+    content += list[i].toString()
   }
   try {
     execSync(`rm -rf ${outputDir}`)
@@ -64,7 +63,7 @@ ${Object.keys(categories).map(key=>`- [${key}](./${key}.md)`).join('\n\n')}\n\n
 
   Object.keys(categories).forEach(key => {
     const content = `此列表在 ${time} 自动生成\n\n` +
-      categories[key].map(feedToString).join('')
+      categories[key].map(feed => feed.toString()).join('')
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), content)
   })
 
@@ -75,7 +74,8 @@ ${Object.keys(categories).map(key=>`- [${key}](./${key}.md)`).join('\n\n')}\n\n
   execSync(`cd ${acfunVideoIndexDir} && git config user.email srleo@qq.com`)
 
   await new Promise((resolve, reject) => {
-    exec(`cd ${acfunVideoIndexDir} && git add ./ && git commit -am '自动生成${time}'`,
+    exec(
+      `cd ${acfunVideoIndexDir} && git add ./ && git commit -am '自动生成${time}'`,
       (err, stdout, stderr) => {
         if (err) return reject(stdout)
         resolve(stdout)
@@ -88,12 +88,6 @@ ${Object.keys(categories).map(key=>`- [${key}](./${key}.md)`).join('\n\n')}\n\n
 
   log = execSync(`cd ${acfunVideoIndexDir} && git push`)
   console.log('git push', log.toString())
-}
-
-function feedToString (feed: Feed): string {
-  return `### ${feed.title} <a target="_blank" href="${feed.shareUrl}">播放</a>\n\n` +
-    `<img src="${feed.coverUrl}" height="200px"/>\n\n` +
-    `${feed.description}\n\n`
 }
 
 main()
