@@ -8,10 +8,7 @@ on:
   #    branches: [ master ]
   #  pull_request:
   #    branches: [ master ]
-  workflow_dispatch: 
-    inputs:
-        message:
-          description: "Message to echo"
+  repository_dispatch:
   watch:
     types: [ started ] # 有人点星星就执行
   schedule: # 注意这是UTC时间，有时差，16点对应的是北京时间0点
