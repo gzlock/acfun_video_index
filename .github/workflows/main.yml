@@ -28,7 +28,7 @@ jobs:
           node-version: 16.x
 
       - name: 安装
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: 运行
         run: npm run start
