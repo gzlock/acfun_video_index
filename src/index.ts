@@ -1,8 +1,5 @@
 import { personalBasicInfo } from './personalBasicInfo'
-import {
-  ContributeListStatus,
-  queryContributeList,
-} from './queryContributeList'
+import { ContributeListStatus, queryContributeList, } from './queryContributeList'
 import * as fs from 'fs'
 import { exec, execSync } from 'child_process'
 import path from 'path'
@@ -30,6 +27,11 @@ async function main () {
     )
     page = current
     list.push(...feeds)
+
+    // 等待1秒
+    await new Promise(resolve => {
+      setTimeout(() => resolve(null), 1000)
+    })
   }
   console.log('视频总数', list.length)
   const categories: { [key: string]: Feed[] } = {
@@ -37,6 +39,7 @@ async function main () {
     '综艺大热门': list.filter(feed => feed.title.includes('大热门')),
     '小明星大跟班': list.filter(
       feed => feed.title.includes('小明星') || feed.title.includes('大跟班')),
+    '全部视频': list,
   }
   const time = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss')
   let content = `此列表在 ${time} 自动生成\n\n
