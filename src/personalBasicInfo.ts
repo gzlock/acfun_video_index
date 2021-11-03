@@ -7,7 +7,7 @@ import axios, {AxiosResponse} from "axios";
 export function personalBasicInfo<T>(): Promise<AxiosResponse<T>> {
     return axios.get<T>('https://www.acfun.cn/rest/pc-direct/user/personalBasicInfo', {
         headers: {
-            cookie: process.env.ACFUN_COOKIES
+            cookie: process.env.ACFUN_COOKIES as string
         }
     })
 }

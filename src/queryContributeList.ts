@@ -26,7 +26,7 @@ export function queryContributeList (
     {
       timeout: 10000, // 10秒超时
       headers: {
-        cookie: process.env.ACFUN_COOKIES,
+        cookie: process.env.ACFUN_COOKIES as string,
       },
     }).then(res => ({
     page: res.data.pcursor,
