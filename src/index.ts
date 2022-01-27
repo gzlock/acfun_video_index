@@ -29,9 +29,9 @@ async function main () {
     list.push(...feeds)
 
     // 等待1秒
-    await new Promise(resolve => {
-      setTimeout(() => resolve(null), 5000)
-    })
+    // await new Promise(resolve => {
+    //   setTimeout(() => resolve(null), 5000)
+    // })
   }
   console.log('视频总数', list.length)
   const categories: { [key: string]: Feed[] } = {
