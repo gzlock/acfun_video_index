@@ -39,6 +39,7 @@ async function main () {
     '综艺大热门': list.filter(feed => feed.title.includes('大热门')),
     '小明星大跟班': list.filter(
       feed => feed.title.includes('小明星') || feed.title.includes('大跟班')),
+    '天王到你家': list.filter(feed => feed.title.includes('天王到你家')),
     '全部视频': list,
   }
   const time = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss')
