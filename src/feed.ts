@@ -24,6 +24,10 @@ export class Feed{
     this.auditMsg = data.auditMsg
   }
 
+  toJSON(){
+
+  }
+
   toString () {
     let play
     switch (this.status) {

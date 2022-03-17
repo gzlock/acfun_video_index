@@ -103,6 +103,7 @@ main()
 async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) {
   const keys = Object.keys(categories)
   const main = {
+    createdAt: new Date(),
     list: keys.reduce((data, key) => {
       // @ts-ignore
       data.push({ name: key, file: `./${key}.json` })
