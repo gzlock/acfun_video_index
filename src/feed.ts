@@ -5,7 +5,7 @@ enum FeedStatus {
   fail = 7 // 已退回
 }
 
-export class Feed{
+export class Feed {
   public id: string
   public auditMsg?: string
   public coverUrl: string
@@ -24,8 +24,16 @@ export class Feed{
     this.auditMsg = data.auditMsg
   }
 
-  toJSON(){
-
+  toJSON () {
+    return {
+      id: this.id,
+      title: this.title,
+      status: FeedStatus[this.status],
+      shareUrl: this.shareUrl,
+      description: this.description,
+      coverUrl: this.coverUrl,
+      auditMsg: this.auditMsg,
+    }
   }
 
   toString () {

@@ -111,10 +111,13 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
     }, []), // 视频列表
     new: list.splice(0, 10), // 最新的视频
   }
+
+  fs.mkdir(path.join(acfunVideoIndexDir, 'json'), () => {})
+
   console.log('生成main.json文件')
-  fs.writeFileSync(path.join(acfunVideoIndexDir, 'main.json'), JSON.stringify(main))
+  fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', 'main.json'), JSON.stringify(main))
 
   for (let key of keys) {
-    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.json`), JSON.stringify(categories[key]))
+    fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${key}.json`), JSON.stringify(categories[key]))
   }
 }
