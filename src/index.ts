@@ -76,8 +76,8 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
   console.log('git status:',
     execSync(`cd ${acfunVideoIndexDir} && git status -s`).toString())
 
-  execSync(`cd ${acfunVideoIndexDir} && git config user.name gzlock`)
-  execSync(`cd ${acfunVideoIndexDir} && git config user.email srleo@qq.com`)
+  execSync(`cd ${acfunVideoIndexDir} && git config user.name ${process.env.GITEE_USERNAME}`)
+  execSync(`cd ${acfunVideoIndexDir} && git config user.email ${process.env.GITEE_EMAIL}`)
 
   await outputJSON(list, categories)
 

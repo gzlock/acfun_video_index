@@ -33,4 +33,6 @@ jobs:
         run: npm run start
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          GITEE_EMAIL: ${{ secrets.GITEE_EMAIL }}
+          GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
           ACFUN_COOKIES: ${{ secrets.ACFUN_COOKIES }}
