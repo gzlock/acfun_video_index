@@ -6,6 +6,7 @@ import path from 'path'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { Feed } from './feed'
+import lodash from 'lodash/'
 
 dayjs.extend(utc)
 
@@ -50,15 +51,16 @@ async function main () {
 分类列表：\n\n
 ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\n
 # 最新上传的10个视频：\n\n`
-  for (let i = 0; i < 10; i++) {
-    readme_md += list[i].toString()
-  }
+
+
+  lodash.take(list,10).forEach(feed => readme_md += feed.toString())
+
   try {
     execSync(`rm -rf ${outputDir}`)
+    fs.mkdirSync(outputDir)
   } catch (e) {
     console.log('删除output文件夹失败', e)
   }
-  fs.mkdirSync(outputDir)
 
   let log: any = execSync(
     `cd ${outputDir} && git clone --depth=1 https://gzlock:${process.env.GITEE_TOKEN}@gitee.com/gzlock/acfun_video_index.git`)
@@ -109,15 +111,18 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
       data.push({ name: key, file: `./${key}.json` })
       return data
     }, []), // 视频列表
-    new: list.splice(0, 10), // 最新的视频
+    new: lodash.take(list,10).splice(0, 10), // 最新的视频
   }
 
-  fs.mkdir(path.join(acfunVideoIndexDir, 'json'), () => {})
+  fs.rmdirSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
+
+  fs.mkdirSync(path.join(acfunVideoIndexDir, 'json'))
 
   console.log('生成main.json文件')
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', 'main.json'), JSON.stringify(main))
 
   for (let key of keys) {
+    console.log(`生成${key}.json文件`)
     fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${key}.json`), JSON.stringify(categories[key]))
   }
 }
