@@ -6,12 +6,6 @@ declare interface PersonBasicInfo {
   }
 }
 
-declare interface Headers {
-  cookie: string
-
-  [key: string]: string
-}
-
 declare interface ContributeList {
   feed: IFeed[] // 视频列表
   pcursor: string | 'no_more' // 下一页页码
@@ -23,6 +17,7 @@ declare interface ContributeList {
 }
 
 declare interface IFeed {
+  dougaId: string // 视频id
   title: string // 视频标题
   description: string // 视频描述
   coverUrl: string // 视频封面

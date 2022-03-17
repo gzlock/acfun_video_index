@@ -5,7 +5,8 @@ enum FeedStatus {
   fail = 7 // 已退回
 }
 
-export class Feed implements IFeed {
+export class Feed{
+  public id: string
   public auditMsg?: string
   public coverUrl: string
   public description: string
@@ -14,6 +15,7 @@ export class Feed implements IFeed {
   public title: string
 
   constructor (data: IFeed) {
+    this.id = data.dougaId
     this.title = data.title
     this.status = data.status
     this.shareUrl = data.shareUrl

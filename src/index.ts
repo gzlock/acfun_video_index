@@ -44,13 +44,14 @@ async function main () {
     '全部视频': list,
   }
   const time = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss')
-  let content = `此列表在 ${time} 自动生成\n\n
+
+  let readme_md = `此列表在 ${time} 自动生成\n\n
 由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n
 分类列表：\n\n
 ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\n
 # 最新上传的10个视频：\n\n`
   for (let i = 0; i < 10; i++) {
-    content += list[i].toString()
+    readme_md += list[i].toString()
   }
   try {
     execSync(`rm -rf ${outputDir}`)
@@ -64,7 +65,7 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
   console.log('从Gitee克隆仓库', log.toString())
 
   console.log('生成README.md文件')
-  fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), content)
+  fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), readme_md)
 
   Object.keys(categories).forEach(key => {
     const content = `此列表在 ${time} 自动生成\n\n` +
@@ -77,6 +78,8 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
 
   execSync(`cd ${acfunVideoIndexDir} && git config user.name gzlock`)
   execSync(`cd ${acfunVideoIndexDir} && git config user.email srleo@qq.com`)
+
+  await outputJSON(list, categories)
 
   await new Promise((resolve, reject) => {
     exec(
@@ -96,3 +99,17 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
 }
 
 main()
+
+async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) {
+  const keys = Object.keys(categories)
+  const main = {
+    list: keys.map(key => `./${key}.json`), // 视频列表
+    new: list.splice(0, 10), // 最新的视频
+  }
+  console.log('生成main.json文件')
+  fs.writeFileSync(path.join(acfunVideoIndexDir, 'main.json'), JSON.stringify(main))
+
+  for (let key of keys) {
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.json`), JSON.stringify(categories[key]))
+  }
+}
