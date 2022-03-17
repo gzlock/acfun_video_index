@@ -103,7 +103,11 @@ main()
 async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) {
   const keys = Object.keys(categories)
   const main = {
-    list: keys.map(key => `./${key}.json`), // 视频列表
+    list: keys.reduce((data, key) => {
+      // @ts-ignore
+      data.push({ name: key, file: `./${key}.json` })
+      return data
+    }, []), // 视频列表
     new: list.splice(0, 10), // 最新的视频
   }
   console.log('生成main.json文件')
