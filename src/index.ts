@@ -34,6 +34,7 @@ async function main () {
     //   setTimeout(() => resolve(null), 5000)
     // })
   }
+
   console.log('视频总数', list.length)
   const categories: { [key: string]: Feed[] } = {
     '综艺玩很大': list.filter(feed => feed.title.includes('玩很大')),
