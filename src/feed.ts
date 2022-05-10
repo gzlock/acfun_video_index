@@ -54,8 +54,10 @@ export class Feed {
       default:
         play = '[视频状态未知]'
     }
-    return `### ${this.title} ${play}\n\n` +
-      `<img src="${this.coverUrl}" height="200px"/>\n\n` +
-      `${this.description}\n\n`
+    const str = `### ${this.title} ${play}\n\n` +
+      `<img src="${this.coverUrl}" height="200px"/>\n\n`
+    if (this.description)
+      return str + `${this.description}\n\n`
+    return str
   }
 }
