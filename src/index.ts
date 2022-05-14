@@ -98,6 +98,7 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
     console.error('git commit', '失败', e)
   })
 
+
   log = execSync(`cd ${acfunVideoIndexDir} && git push`)
   console.log('git push', log.toString())
 }
