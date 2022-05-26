@@ -1,10 +1,3 @@
-enum FeedStatus {
-  encoding = 5, // 转码中
-  reviewing = 1, // 审核中
-  success = 2, // 成功
-  fail = 7 // 已退回
-}
-
 export class Feed {
   public id: string
   public auditMsg?: string
@@ -28,7 +21,7 @@ export class Feed {
     return {
       id: this.id,
       title: this.title,
-      status: FeedStatus[this.status],
+      status: this.status.toString(),
       shareUrl: this.shareUrl,
       description: this.description,
       coverUrl: this.coverUrl,
@@ -36,7 +29,7 @@ export class Feed {
     }
   }
 
-  toString () {
+  toMarkDown () {
     let play
     switch (this.status) {
       case FeedStatus.success:
@@ -46,7 +39,7 @@ export class Feed {
         play = `[正在进行视频编码]`
         break
       case FeedStatus.fail:
-        play = `[审核失败]\n\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
+        play = `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
         break
       case FeedStatus.reviewing:
         play = '[正在审核视频]'
@@ -59,5 +52,53 @@ export class Feed {
     if (this.description)
       return str + `${this.description}\n\n`
     return str
+  }
+
+  toHtml () {
+    let play
+    switch (this.status) {
+      case FeedStatus.success:
+        play = `[<a target="_blank" href="${this.shareUrl}">播放</a>]`
+        break
+      case FeedStatus.encoding:
+        play = `[正在进行视频编码]`
+        break
+      case FeedStatus.fail:
+        play = `[审核失败]<br>原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
+        break
+      case FeedStatus.reviewing:
+        play = '[正在审核视频]'
+        break
+      default:
+        play = '[视频状态未知]'
+    }
+    const str = `<h1>${this.title}</h1> <div>${play}</div> <div><img src="${this.coverUrl}" height="200px"/></div>`
+    if (this.description)
+      return str + `<div>${this.description}</div>`
+    return str
+  }
+
+  toTxt () {
+    let play
+    switch (this.status) {
+      case FeedStatus.success:
+        play = `观看链接: ${this.shareUrl}\n`
+        break
+      case FeedStatus.encoding:
+        play = `[正在进行视频编码]\n`
+        break
+      case FeedStatus.fail:
+        play = `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}\n`
+        break
+      case FeedStatus.reviewing:
+        play = '[正在审核视频]\n'
+        break
+      default:
+        play = '[视频状态未知]\n'
+    }
+    const str = `${this.title}\n${play}`
+    if (this.description)
+      return str + this.description.replace('<br/>', '\n') + '\n\n'
+    return str + '\n\n'
   }
 }

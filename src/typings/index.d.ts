@@ -1,4 +1,3 @@
-
 declare interface PersonBasicInfo {
   info: {
     userId: number
@@ -14,6 +13,13 @@ declare interface ContributeList {
    * 按这个状态查询，整个账号有多少视频
    */
   totalNum: number
+}
+
+declare const enum FeedStatus {
+  encoding = 5, // 转码中
+  reviewing = 1, // 审核中
+  success = 2, // 成功
+  fail = 7 // 已退回
 }
 
 declare interface IFeed {

@@ -4,7 +4,7 @@
   "description": "#### 介绍 索引自己上传到Acfun的视频地址",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node --files src/index.ts"
+    "start": "ts-node --project tsconfig.json src/index.ts"
   },
   "repository": {
     "type": "git",

@@ -54,8 +54,7 @@ async function main () {
 ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\n
 # 最新上传的10个视频：\n\n`
 
-
-  lodash.take(list,10).forEach(feed => readme_md += feed.toString())
+  lodash.take(list, 10).forEach(feed => readme_md += feed.toMarkDown())
 
   try {
     execSync(`rm -rf ${outputDir}`)
@@ -72,9 +71,17 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), readme_md)
 
   Object.keys(categories).forEach(key => {
-    const content = `此列表在 ${time} 自动生成\n\n` +
-      categories[key].map(feed => feed.toString()).join('')
-    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), content)
+    let html = `<h2>此列表在 ${time} 自动生成</h2>`
+    let text = `此列表在 ${time} 自动生成\n\n`
+    let markdown = `此列表在 ${time} 自动生成\n\n`
+    categories[key].forEach(feed => {
+      markdown += feed.toMarkDown()
+      html += feed.toHtml()
+      text += feed.toTxt()
+    })
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown)
+    // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text)
+    // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html)
   })
 
   console.log('git status:',
@@ -98,7 +105,6 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
     console.error('git commit', '失败', e)
   })
 
-
   log = execSync(`cd ${acfunVideoIndexDir} && git push`)
   console.log('git push', log.toString())
 }
@@ -114,7 +120,7 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
       data.push({ name: key, file: `./${key}.json` })
       return data
     }, []), // 视频列表
-    new: lodash.take(list,10).splice(0, 10), // 最新的视频
+    new: lodash.take(list, 10).splice(0, 10), // 最新的视频
   }
 
   fs.rmdirSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
