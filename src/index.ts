@@ -71,9 +71,9 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), readme_md)
 
   Object.keys(categories).forEach(key => {
-    let html = `<h2>此列表在 ${time} 自动生成</h2>`
-    let text = `此列表在 ${time} 自动生成\n\n`
-    let markdown = `此列表在 ${time} 自动生成\n\n`
+    // const html = [`<h2>此列表在 ${time} 自动生成</h2>`]
+    const text = [`此列表在 ${time} 自动生成\n\n`]
+    const markdown = [`此列表在 ${time} 自动生成\n\n`]
     categories[key].sort((a, b) => {
       const aMatch = a.title.match(/\d{2,4}[.-]?\d{2}[.-]?\d{2}/g)
       const bMatch = b.title.match(/\d{2,4}[.-]?\d{2}[.-]?\d{2}/g)
@@ -84,13 +84,13 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
         return bTime - aTime
       } else return 0
     }).forEach(feed => {
-      markdown += feed.toMarkDown()
-      html += feed.toHtml()
-      text += feed.toTxt()
+      // html.push(feed.toHtml())
+      markdown.push(feed.toMarkDown())
+      text.push(feed.toTxt())
     })
-    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown)
-    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text)
-    // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html)
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown.join('\n'))
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text.join('\n'))
+    // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html.join('\n'))
   })
 
   console.log('git status:',

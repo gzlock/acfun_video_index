@@ -50,7 +50,7 @@ export class Feed {
     const str = `### ${this.title} ${play}\n\n` +
       `<img src="${this.coverUrl}" height="200px"/>\n\n`
     if (this.description)
-      return str + `${this.description}\n\n`
+      return str + `${this.description}`
     return str
   }
 
@@ -97,8 +97,8 @@ export class Feed {
         play = '[视频状态未知]\n'
     }
     const str = `${this.title}\n${play}`
-    if (this.description)
-      return str + this.description.replace('<br/>', '\n') + '\n\n'
-    return str + '\n\n'
+    // if (this.description)
+    //   return str + this.description.replace('<br/>', '\n')
+    return str
   }
 }
