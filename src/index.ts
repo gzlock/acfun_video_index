@@ -39,11 +39,11 @@ async function main () {
   const categories: { [key: string]: Feed[] } = {
     '综艺玩很大': list.filter(feed => feed.title.includes('玩很大')),
     '综艺大热门': list.filter(feed => feed.title.includes('大热门')),
-    '小明星大跟班': list.filter(
-      feed => feed.title.includes('小明星') || feed.title.includes('大跟班')),
+    '小明星大跟班': list.filter(feed => feed.title.includes('小明星大跟班')),
     '天王到你家': list.filter(feed => feed.title.includes('天王到你家')),
     '小姐不熙娣': list.filter(feed => feed.title.includes('小姐不熙娣')),
-    '来吧！营业中': list.filter(feed => feed.title.includes('营业中') || feed.title.includes('營業中')),
+    '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
+    '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
     '全部视频': list,
   }
   const time = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss')
@@ -74,13 +74,22 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
     let html = `<h2>此列表在 ${time} 自动生成</h2>`
     let text = `此列表在 ${time} 自动生成\n\n`
     let markdown = `此列表在 ${time} 自动生成\n\n`
-    categories[key].forEach(feed => {
+    categories[key].sort((a, b) => {
+      const aMatch = a.title.match(/\d{2,4}[.-]?\d{2}[.-]?\d{2}/g)
+      const bMatch = b.title.match(/\d{2,4}[.-]?\d{2}[.-]?\d{2}/g)
+      if (aMatch && bMatch) {
+        const aTime = parseInt(aMatch[0].replace(/[.-]/g, ''))
+        const bTime = parseInt(bMatch[0].replace(/[.-]/g, ''))
+        // console.log({ aMatch: aMatch[0], aTime, bMatch: bMatch[0], bTime })
+        return bTime - aTime
+      } else return 0
+    }).forEach(feed => {
       markdown += feed.toMarkDown()
       html += feed.toHtml()
       text += feed.toTxt()
     })
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown)
-    // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text)
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text)
     // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html)
   })
 
