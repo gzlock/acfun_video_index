@@ -81,8 +81,9 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
         const aTime = parseInt(aMatch[0].replace(/[.-]/g, ''))
         const bTime = parseInt(bMatch[0].replace(/[.-]/g, ''))
         // console.log({ aMatch: aMatch[0], aTime, bMatch: bMatch[0], bTime })
-        return bTime - aTime
-      } else return 0
+        return dayjs(aTime).isAfter(dayjs(bTime)) ? -1 : 1
+      }
+      return -1
     }).forEach(feed => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
