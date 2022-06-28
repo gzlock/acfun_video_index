@@ -1,11 +1,11 @@
-declare interface PersonBasicInfo {
+export interface PersonBasicInfo {
   info: {
     userId: number
     userName: string
   }
 }
 
-declare interface ContributeList {
+export interface ContributeList {
   feed: IFeed[] // 视频列表
   pcursor: string | 'no_more' // 下一页页码
   /**
@@ -15,14 +15,14 @@ declare interface ContributeList {
   totalNum: number
 }
 
-declare const enum FeedStatus {
+export const enum FeedStatus {
   encoding = 5, // 转码中
   reviewing = 1, // 审核中
   success = 2, // 成功
   fail = 7 // 已退回
 }
 
-declare interface IFeed {
+export interface IFeed {
   dougaId: string // 视频id
   title: string // 视频标题
   description: string // 视频描述

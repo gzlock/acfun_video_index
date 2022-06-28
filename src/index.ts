@@ -1,14 +1,12 @@
-import { personalBasicInfo } from './personalBasicInfo'
-import { ContributeListStatus, queryContributeList, } from './queryContributeList'
 import * as fs from 'fs'
 import { exec, execSync } from 'child_process'
 import path from 'path'
 import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import { Feed } from './feed'
-import lodash from 'lodash/'
-
-dayjs.extend(utc)
+import lodash from 'lodash'
+import { personalBasicInfo } from './personalBasicInfo.js'
+import { Feed } from './feed.js'
+import { ContributeListStatus, queryContributeList, } from './queryContributeList.js'
+import { PersonBasicInfo } from './types.js'
 
 const cwd = process.cwd()
 const outputDir = path.join(cwd, 'output')
@@ -46,7 +44,7 @@ async function main () {
     '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
     '全部视频': list,
   }
-  const time = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss')
+  const time = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
   let readme_md = `此列表在 ${time} 自动生成\n\n
 由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n

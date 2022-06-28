@@ -1,3 +1,5 @@
+import { FeedStatus, IFeed } from './types.js'
+
 export class Feed {
   public id: string
   public auditMsg?: string
