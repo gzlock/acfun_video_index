@@ -8,6 +8,7 @@ import { Feed } from './feed.js'
 import { ContributeListStatus, queryContributeList, } from './queryContributeList.js'
 import { PersonBasicInfo } from './types.js'
 
+const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/g
 const cwd = process.cwd()
 const outputDir = path.join(cwd, 'output')
 const acfunVideoIndexDir = path.join(outputDir, 'acfun_video_index')
@@ -73,8 +74,8 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
     const text = [`此列表在 ${time} 自动生成\n\n`]
     const markdown = [`此列表在 ${time} 自动生成\n\n`]
     categories[key].sort((a, b) => {
-      const aMatch = a.title.match(/\d{2,4}[.-]?\d{2}[.-]?\d{2}/g)
-      const bMatch = b.title.match(/\d{2,4}[.-]?\d{2}[.-]?\d{2}/g)
+      const aMatch = a.title.match(matchDate)
+      const bMatch = b.title.match(matchDate)
       if (aMatch && bMatch) {
         const aTime = parseInt(aMatch[0].replace(/[.-]/g, ''))
         const bTime = parseInt(bMatch[0].replace(/[.-]/g, ''))
