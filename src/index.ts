@@ -63,7 +63,7 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
   }
 
   let log: any = execSync(
-    `cd ${outputDir} && git clone --depth=1 https://gzlock:${process.env.GITEE_TOKEN}@gitee.com/gzlock/acfun_video_index.git`)
+    `cd ${outputDir} && git clone --depth=1 https://gzlock:${process.env.AZURE_TOKEN}@dev.azure.com/gzlock/acfun_video_index/_git/acfun_video_index`)
   console.log('从Gitee克隆仓库', log.toString())
 
   console.log('生成README.md文件')
@@ -96,8 +96,8 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
   console.log('git status:',
     execSync(`cd ${acfunVideoIndexDir} && git status -s`).toString())
 
-  execSync(`cd ${acfunVideoIndexDir} && git config user.name ${process.env.GITEE_USERNAME}`)
-  execSync(`cd ${acfunVideoIndexDir} && git config user.email ${process.env.GITEE_EMAIL}`)
+  execSync(`cd ${acfunVideoIndexDir} && git config user.name ${process.env.AZURE_USERNAME}`)
+  execSync(`cd ${acfunVideoIndexDir} && git config user.email ${process.env.AZURE_EMAIL}`)
 
   await outputJSON(list, categories)
 
