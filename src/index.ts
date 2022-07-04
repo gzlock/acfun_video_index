@@ -71,8 +71,8 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
 
   Object.keys(categories).forEach(key => {
     // const html = [`<h2>此列表在 ${time} 自动生成</h2>`]
-    const text = [`此列表在 ${time} 自动生成，一共${categories[key].length}个视频\n\n`]
-    const markdown = [`此列表在 ${time} 自动生成，一共${categories[key].length}个视频\n\n`]
+    const text = [`此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频\n\n`]
+    const markdown = [`此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频\n\n`]
     categories[key].sort((a, b) => {
       const aMatch = a.title.match(matchDate)
       const bMatch = b.title.match(matchDate)
