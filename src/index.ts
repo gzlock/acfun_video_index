@@ -132,7 +132,7 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
     new: lodash.take(list, 10).splice(0, 10), // 最新的视频
   }
 
-  fs.rmdirSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
+  fs.rmSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
 
   fs.mkdirSync(path.join(acfunVideoIndexDir, 'json'))
 

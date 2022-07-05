@@ -32,7 +32,7 @@ jobs:
       - name: 运行
         run: npm run start
         env:
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          GITEE_EMAIL: ${{ secrets.GITEE_EMAIL }}
-          GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+          AZURE_TOKEN: ${{ secrets.AZURE_TOKEN }}
+          AZURE_EMAIL: ${{ secrets.AZURE_EMAIL }}
+          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
           ACFUN_COOKIES: ${{ secrets.ACFUN_COOKIES }}
