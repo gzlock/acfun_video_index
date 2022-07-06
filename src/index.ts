@@ -55,7 +55,7 @@ async function main () {
   let readme_md = `此列表在 ${time} 自动生成\n\n
 由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n
 分类列表：\n\n
-${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\n
+${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个视频)](./${key}.md)`).join('\n\n')}\n\n
 # 最新上传的10个视频：\n\n`
 
   lodash.take(list, 10).forEach(feed => readme_md += feed.toMarkDown())
