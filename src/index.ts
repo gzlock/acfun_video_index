@@ -7,8 +7,10 @@ import { personalBasicInfo } from './personalBasicInfo.js'
 import { Feed } from './feed.js'
 import { ContributeListStatus, queryContributeList, } from './queryContributeList.js'
 import { PersonBasicInfo } from './types.js'
+import PQueue from 'p-queue'
 
-const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/g
+// 匹配多种日期 20190202 190202 2019.02.02 2022-01-01
+const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/
 const cwd = process.cwd()
 const outputDir = path.join(cwd, 'output')
 const acfunVideoIndexDir = path.join(outputDir, 'acfun_video_index')
@@ -16,23 +18,26 @@ console.log('目录', acfunVideoIndexDir)
 
 async function main () {
   const { data: { info: { userId } } } = await personalBasicInfo<PersonBasicInfo>()
+  const queue = new PQueue({ autoStart: true, concurrency: 8 })
+  // 获取一页的数据长度，和total总数
+  const { list: feeds, total } = await queryContributeList(
+    userId,
+    0,
+    ContributeListStatus.all,
+  )
   const list: Feed[] = []
-  let page: any = 0
-  while (page != 'no_more') {
-    console.log('正在读取', `第${page}页`)
-    const { page: current, list: feeds } = await queryContributeList(
+  // 总页数，如果是有小数自动+1
+  const totalPage = Math.ceil(total / feeds.length)
+  for (let page = 0; page < totalPage; page++) {
+    queue.add(() => queryContributeList(
       userId,
       page,
       ContributeListStatus.all,
-    )
-    page = current
-    list.push(...feeds)
-
-    // 等待1秒
-    // await new Promise(resolve => {
-    //   setTimeout(() => resolve(null), 5000)
-    // })
+    )).then(res => {
+      list.push(...res.list)
+    })
   }
+  await queue.onIdle()
 
   console.log('视频总数', list.length)
   const categories: { [key: string]: Feed[] } = {
@@ -73,17 +78,29 @@ ${Object.keys(categories).map(key => `- [${key}](./${key}.md)`).join('\n\n')}\n\
     // const html = [`<h2>此列表在 ${time} 自动生成</h2>`]
     const text = [`此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频\n\n`]
     const markdown = [`此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频\n\n`]
-    categories[key].sort((a, b) => {
-      const aMatch = a.title.match(matchDate)
-      const bMatch = b.title.match(matchDate)
-      if (aMatch && bMatch) {
-        const aTime = parseInt(aMatch[0].replace(/[.-]/g, ''))
-        const bTime = parseInt(bMatch[0].replace(/[.-]/g, ''))
-        // console.log({ aMatch: aMatch[0], aTime, bMatch: bMatch[0], bTime })
-        return dayjs(aTime).isAfter(dayjs(bTime)) ? -1 : 1
-      }
-      return 1
-    }).forEach(feed => {
+    let list: Feed[] = []
+    const other: Feed[] = []
+    if (key == '全部视频') {
+      list = categories[key]
+    } else {
+      categories[key].forEach(feed => {
+        const test = matchDate.test(feed.title)
+        if (test) list.push(feed)
+        else other.push(feed)
+      })
+      list = list.sort((a, b) => {
+        const aMatch = a.title.match(matchDate)
+        const bMatch = b.title.match(matchDate)
+        if (aMatch && bMatch) {
+          const aTime = parseInt(aMatch[0].replace(/[.-]/g, ''))
+          const bTime = parseInt(bMatch[0].replace(/[.-]/g, ''))
+          // console.log({ aMatch: aMatch[0], aTime, bMatch: bMatch[0], bTime })
+          return dayjs(aTime).isAfter(dayjs(bTime)) ? -1 : 1
+        }
+        return 1
+      })
+    }
+    [...list, ...other].forEach(feed => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
       text.push(feed.toTxt())

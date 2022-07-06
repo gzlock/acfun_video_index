@@ -11,7 +11,7 @@ export class Feed {
 
   constructor (data: IFeed) {
     this.id = data.dougaId
-    this.title = data.title
+    this.title = data.title.trim()
     this.status = data.status
     this.shareUrl = data.shareUrl
     this.description = data.description

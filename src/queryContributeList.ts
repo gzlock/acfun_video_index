@@ -20,8 +20,9 @@ export function queryContributeList (
   authorId: number,
   page: number | string = 0,
   status: ContributeListStatus,
-): Promise<{ page: any, list: Feed[] }> {
+): Promise<{ page: any, list: Feed[], total: number }> {
   page = page >= 0 ? page : 0
+  console.log('正在读取', page, '页')
   return pRetry(() => axios.post<ContributeList>(
     'https://member.acfun.cn/list/api/queryContributeList',
     `pcursor=${page}&resourceType=2&sortType=3&authorId=${authorId}&status=${status}`,
@@ -39,5 +40,6 @@ export function queryContributeList (
     }).then(res => ({
     page: res.data.pcursor,
     list: res.data.feed.map(data => new Feed(data)),
+    total: res.data.totalNum,
   })), { retries: 3 })
 }
