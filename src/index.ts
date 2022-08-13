@@ -3,10 +3,8 @@ import { exec, execSync } from 'child_process'
 import path from 'path'
 import dayjs from 'dayjs'
 import lodash from 'lodash'
-import { personalBasicInfo } from './personalBasicInfo.js'
 import { Feed } from './feed.js'
 import { ContributeListStatus, queryContributeList, } from './queryContributeList.js'
-import { PersonBasicInfo } from './types.js'
 import PQueue from 'p-queue'
 
 // 匹配多种日期 20190202 190202 2019.02.02 2022-01-01
@@ -16,12 +14,16 @@ const outputDir = path.join(cwd, 'output')
 const acfunVideoIndexDir = path.join(outputDir, 'acfun_video_index')
 console.log('目录', acfunVideoIndexDir)
 
+const acPassToken = process.env.ACFUN_TOKEN as string
+const uid = process.env.ACFUN_UID as string
+const cookie = `acPasstoken=${acPassToken}; auth_key=${uid}; `
+
 async function main () {
-  const { data: { info: { userId } } } = await personalBasicInfo<PersonBasicInfo>()
   const queue = new PQueue({ autoStart: true, concurrency: 8 })
   // 获取一页的数据长度，和total总数
   const { list: feeds, total } = await queryContributeList(
-    userId,
+    uid,
+    cookie,
     0,
     ContributeListStatus.all,
   )
@@ -30,7 +32,8 @@ async function main () {
   const totalPage = Math.ceil(total / feeds.length)
   for (let page = 0; page < totalPage; page++) {
     queue.add(() => queryContributeList(
-      userId,
+      uid,
+      cookie,
       page,
       ContributeListStatus.all,
     )).then(res => {

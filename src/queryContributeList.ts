@@ -13,11 +13,13 @@ export enum ContributeListStatus {
 /**
  *
  * @param authorId 账号id
+ * @param cookie
  * @param page 页数，从0开始
  * @param status 视频状态 0
  */
 export function queryContributeList (
-  authorId: number,
+  authorId: string,
+  cookie:string,
   page: number | string = 0,
   status: ContributeListStatus,
 ): Promise<{ page: any, list: Feed[], total: number }> {
@@ -29,7 +31,7 @@ export function queryContributeList (
     {
       timeout: 10000, // 10秒超时
       headers: {
-        cookie: process.env.ACFUN_COOKIES as string,
+        cookie: cookie,
         'accept': 'application/json, text/plain, */*',
         'accept-language': 'zh-CN,zh;q=0.9',
         'cache-control': 'no-cache',
