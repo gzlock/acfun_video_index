@@ -16,10 +16,10 @@ nodejs 14+
 
 ***本项目使用Github Actions，会定时自动化执行***
 
-图1
+#### 图1
 
 ![图1](img/1.png)
 
-图2，只需要将cookie这个字段的文本放入环境变量 ACFUN_COOKIES 即可
+#### 图2
 
 ![图2](img/2.png)
