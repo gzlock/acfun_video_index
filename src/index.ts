@@ -28,7 +28,7 @@ async function main () {
     ContributeListStatus.all,
   )
   const list: Feed[] = []
-  // 总页数，如果是有小数自动+1
+  // 总页数，如果有小数自动+1
   const totalPage = Math.ceil(total / feeds.length)
   for (let page = 0; page < totalPage; page++) {
     queue.add(() => queryContributeList(

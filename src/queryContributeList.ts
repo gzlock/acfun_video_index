@@ -19,7 +19,7 @@ export enum ContributeListStatus {
  */
 export function queryContributeList (
   authorId: string,
-  cookie:string,
+  cookie: string,
   page: number | string = 0,
   status: ContributeListStatus,
 ): Promise<{ page: any, list: Feed[], total: number }> {
@@ -39,9 +39,12 @@ export function queryContributeList (
         'pragma': 'no-cache',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'
       },
-    }).then(res => ({
-    page: res.data.pcursor,
-    list: res.data.feed.map(data => new Feed(data)),
-    total: res.data.totalNum,
-  })), { retries: 3 })
+    }).then(res => {
+    console.log(page, res.data)
+    return {
+      page: res.data.pcursor,
+      list: res.data.feed.map(data => new Feed(data)),
+      total: res.data.totalNum,
+    }
+  }), { retries: 3 })
 }
