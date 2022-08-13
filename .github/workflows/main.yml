@@ -35,4 +35,5 @@ jobs:
           AZURE_TOKEN: ${{ secrets.AZURE_TOKEN }}
           AZURE_EMAIL: ${{ secrets.AZURE_EMAIL }}
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
-          ACFUN_COOKIES: ${{ secrets.ACFUN_COOKIES }}
+          ACFUN_UID: ${{ secrets.ACFUN_UID }}
+          ACFUN_TOKEN: ${{ secrets.ACFUN_TOKEN }}
