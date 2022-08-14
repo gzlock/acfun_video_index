@@ -106,7 +106,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
     [...list, ...other].forEach(feed => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
-      text.push(feed.toTxt())
+      text.push(feed.toTxt(key))
     })
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown.join('\n'))
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text.join('\n'))
@@ -161,6 +161,6 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
 
   for (let key of keys) {
     console.log(`生成${key}.json文件`)
-    fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${key}.json`), JSON.stringify(categories[key]))
+    fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${key}.json`), JSON.stringify(categories[key].map(feed => feed.toJSON(key))))
   }
 }

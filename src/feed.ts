@@ -19,10 +19,10 @@ export class Feed {
     this.auditMsg = data.auditMsg
   }
 
-  toJSON () {
+  toJSON (replace: string | null = null) {
     return {
       id: this.id,
-      title: this.title,
+      title: replace ? this.title.replace(replace, '').trim() : this.title,
       status: this.status.toString(),
       shareUrl: this.shareUrl,
       description: this.description,
@@ -80,7 +80,7 @@ export class Feed {
     return str
   }
 
-  toTxt () {
+  toTxt (replace: string | null = null) {
     let play
     switch (this.status) {
       case FeedStatus.success:
@@ -98,7 +98,8 @@ export class Feed {
       default:
         play = '[视频状态未知]\n'
     }
-    const str = `${this.title}\n${play}`
+    const title = replace ? this.title.replace(replace, '').trim() : this.title
+    const str = `${title}\n${play}`
     // if (this.description)
     //   return str + this.description.replace('<br/>', '\n')
     return str
