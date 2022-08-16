@@ -93,6 +93,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
       })
       list = list.reverse()
     } else {
+      // 其余按日期排序
       categories[key].forEach(feed => {
         const test = matchDate.test(feed.title)
         if (test) list.push(feed)
