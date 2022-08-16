@@ -85,6 +85,13 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
     const other: Feed[] = []
     if (key == '全部视频') {
       list = categories[key]
+    } else if (key == '料理之王3') {
+      // 料理之王按集数排序，集数从1开始，所以-1
+      categories[key].forEach(feed => {
+        const number = parseInt(feed.title.match(/ep(\d+)/i)![1]) - 1
+        list[number] = feed
+      })
+      list = list.reverse()
     } else {
       categories[key].forEach(feed => {
         const test = matchDate.test(feed.title)
