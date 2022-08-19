@@ -32,22 +32,11 @@ export class Feed {
   }
 
   toMarkDown () {
-    let play
+    let play = `[<a target="_blank" href="${this.shareUrl}">播放</a>]`
     switch (this.status) {
-      case FeedStatus.success:
-        play = `[<a target="_blank" href="${this.shareUrl}">播放</a>]`
-        break
-      case FeedStatus.encoding:
-        play = `[正在进行视频编码]`
-        break
       case FeedStatus.fail:
-        play = `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
+        play += `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
         break
-      case FeedStatus.reviewing:
-        play = '[正在审核视频]'
-        break
-      default:
-        play = '[视频状态未知]'
     }
     const str = `### ${this.title} ${play}\n\n` +
       `<img src="${this.coverUrl}" height="200px"/>\n\n`
@@ -57,22 +46,11 @@ export class Feed {
   }
 
   toHtml () {
-    let play
+    let play = `[<a target="_blank" href="${this.shareUrl}">播放</a>]`
     switch (this.status) {
-      case FeedStatus.success:
-        play = `[<a target="_blank" href="${this.shareUrl}">播放</a>]`
-        break
-      case FeedStatus.encoding:
-        play = `[正在进行视频编码]`
-        break
       case FeedStatus.fail:
-        play = `[审核失败]<br>原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
+        play += `[审核失败]<br>原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
         break
-      case FeedStatus.reviewing:
-        play = '[正在审核视频]'
-        break
-      default:
-        play = '[视频状态未知]'
     }
     const str = `<h1>${this.title}</h1> <div>${play}</div> <div><img src="${this.coverUrl}" height="200px"/></div>`
     if (this.description)
@@ -81,22 +59,11 @@ export class Feed {
   }
 
   toTxt (replace: string | null = null) {
-    let play
+    let play = `观看链接: ${this.shareUrl}\n`
     switch (this.status) {
-      case FeedStatus.success:
-        play = `观看链接: ${this.shareUrl}\n`
-        break
-      case FeedStatus.encoding:
-        play = `[正在进行视频编码]\n`
-        break
       case FeedStatus.fail:
-        play = `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}\n`
+        play += `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}\n`
         break
-      case FeedStatus.reviewing:
-        play = '[正在审核视频]\n'
-        break
-      default:
-        play = '[视频状态未知]\n'
     }
     const title = replace ? this.title.replace(replace, '').trim() : this.title
     const str = `${title}\n${play}`
