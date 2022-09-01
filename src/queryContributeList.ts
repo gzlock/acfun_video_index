@@ -20,7 +20,7 @@ export enum ContributeListStatus {
 export function queryContributeList (
   authorId: string,
   cookie: string,
-  page: number | string = 0,
+  page: number = 0,
   status: ContributeListStatus,
 ): Promise<{ page: any, list: Feed[], total: number }> {
   page = page >= 0 ? page : 0
@@ -43,7 +43,7 @@ export function queryContributeList (
     // console.log(page, res.data)
     return {
       page: res.data.pcursor,
-      list: res.data.feed.map(data => new Feed(data)),
+      list: res.data.feed.map(data => new Feed(data, page)),
       total: res.data.totalNum,
     }
   }), { retries: 3 })

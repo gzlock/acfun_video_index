@@ -30,4 +30,5 @@ export interface IFeed {
   shareUrl: string // 视频网址
   status: FeedStatus // 视频状态
   auditMsg?: string // 审核失败的原因
+  page: number // 来自哪一页
 }

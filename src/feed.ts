@@ -8,8 +8,9 @@ export class Feed {
   public shareUrl: string
   public status: FeedStatus
   public title: string
+  public page: number
 
-  constructor (data: IFeed) {
+  constructor (data: IFeed, page: number) {
     this.id = data.dougaId
     this.title = data.title.trim()
     this.status = data.status
@@ -17,6 +18,7 @@ export class Feed {
     this.description = data.description
     this.coverUrl = data.coverUrl
     this.auditMsg = data.auditMsg
+    this.page = page
   }
 
   toJSON (replace: string | null = null) {

@@ -111,9 +111,14 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
         return 1
       })
     }
-    [...list, ...other].forEach(feed => {
+    let page: number | null;
+    [...list, ...other].forEach((feed, index) => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
+      if (key == '全部视频' && page != feed.page) {
+        page = feed.page
+        text.push(`第${page + 1}页`)
+      }
       text.push(feed.toTxt(key))
     })
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown.join('\n'))
