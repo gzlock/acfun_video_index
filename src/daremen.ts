@@ -7,7 +7,12 @@ import dayjs from 'dayjs'
  */
 
 async function main (): Promise<void> {
-  const res = await axios.get('https://dev.azure.com/gzlock/74ac0619-da0a-4676-a06c-311f9fd1e5be/_apis/git/repositories/c807a5d1-ed3f-4fd6-847a-6ffdb770884f/items?path=/%E7%BB%BC%E8%89%BA%E5%A4%A7%E7%83%AD%E9%97%A8.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true')
+  const res = await axios.get('https://dev.azure.com/gzlock/74ac0619-da0a-4676-a06c-311f9fd1e5be/_apis/git/repositories/c807a5d1-ed3f-4fd6-847a-6ffdb770884f/items?path=/%E7%BB%BC%E8%89%BA%E5%A4%A7%E7%83%AD%E9%97%A8.txt&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=octetStream&api-version=5.0&download=true', {
+    proxy: {
+      host: '192.168.2.2',
+      port: 7890
+    },
+  })
   const wiki = await loadWiki()
   wiki.forEach(item => {
     if (res.data.indexOf(item.date) == -1)
