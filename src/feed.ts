@@ -12,7 +12,7 @@ export class Feed {
 
   constructor (data: IFeed, page: number) {
     this.id = data.dougaId
-    this.title = data.title.trim()
+    this.title = data.title.trim().replace(/[-.]/g, '')
     this.status = data.status
     this.shareUrl = data.shareUrl
     this.description = data.description
