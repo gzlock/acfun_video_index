@@ -157,9 +157,8 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
   const keys = Object.keys(categories)
   const main = {
     createdAt: new Date(),
-    list: keys.reduce((data, key) => {
-      // @ts-ignore
-      data.push({ name: key, file: `./${key}.json` })
+    list: keys.reduce<any[]>((data, key) => {
+      data.push({ name: `${key}（${categories[key].length}个视频）`, file: `${key}.json` })
       return data
     }, []), // 视频列表
     new: lodash.take(list, 10).splice(0, 10), // 最新的视频
