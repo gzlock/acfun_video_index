@@ -8,7 +8,7 @@ import { ContributeListStatus, queryContributeList, } from './queryContributeLis
 import PQueue from 'p-queue'
 
 // 匹配多种日期 20190202 190202 2019.02.02 2022-01-01
-const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/
+export const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/
 const cwd = process.cwd()
 const outputDir = path.join(cwd, 'output')
 const acfunVideoIndexDir = path.join(outputDir, 'acfun_video_index')

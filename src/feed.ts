@@ -1,4 +1,5 @@
 import { FeedStatus, IFeed } from './types.js'
+import { matchDate } from './index.js'
 
 export class Feed {
   public id: string
@@ -11,8 +12,12 @@ export class Feed {
   public page: number
 
   constructor (data: IFeed, page: number) {
+    const match = data.title.match(matchDate)
+    if (match) {
+      data.title = data.title.replace(matchDate, match[0].replace(/[-.]/g, ''))
+    }
     this.id = data.dougaId
-    this.title = data.title.trim().replace(/[-.]/g, '')
+    this.title = data.title.trim()
     this.status = data.status
     this.shareUrl = data.shareUrl
     this.description = data.description
