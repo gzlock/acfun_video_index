@@ -111,8 +111,9 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
         return 1
       })
     }
-    let page: number | null;
-    [...list, ...other].forEach((feed, index) => {
+    let page: number | null
+    categories[key] = [...list, ...other];
+    categories[key].forEach((feed, index) => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
       if (key == '全部视频' && page != feed.page) {
