@@ -54,11 +54,10 @@ export class Feed {
 
   toHtml () {
     let play = `[<a target="_blank" href="${this.shareUrl}">播放</a>]`
-    switch (this.status) {
-      case FeedStatus.fail:
-        play += `[审核失败]<br>原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
-        break
-    }
+
+    if (this.status == FeedStatus.fail)
+      play += `[审核失败]<br>原因：${this.auditMsg ?? '没有显示审核失败的原因'}`
+
     const str = `<h1>${this.title}</h1> <div>${play}</div> <div><img src="${this.coverUrl}" height="200px"/></div>`
     if (this.description)
       return str + `<div>${this.description}</div>`
@@ -67,15 +66,28 @@ export class Feed {
 
   toTxt (replace: string | null = null) {
     let play = `观看链接: ${this.shareUrl}\n`
-    switch (this.status) {
-      case FeedStatus.fail:
-        play += `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}\n`
-        break
-    }
+
+    if (this.status == FeedStatus.fail)
+      play += `[审核失败]\n原因：${this.auditMsg ?? '没有显示审核失败的原因'}\n`
+
     const title = replace ? this.title.replace(replace, '').trim() : this.title
     const str = `${title}\n${play}`
     // if (this.description)
     //   return str + this.description.replace('<br/>', '\n')
     return str
+  }
+
+  /** 转换为A站文章格式
+   *
+   * @param replace
+   */
+  toAcfunArticle (replace: string | null = null): string[] {
+    const title = replace ? this.title.replace(replace, '').trim() : this.title
+    const res = [title, `观看链接: ${this.shareUrl}`]
+
+    if (this.status == FeedStatus.fail)
+      res.push(...['审核失败', `原因：${this.auditMsg ?? '没有显示审核失败的原因'}`])
+    res.push('<br>')
+    return res
   }
 }

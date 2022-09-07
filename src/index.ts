@@ -6,6 +6,9 @@ import lodash from 'lodash'
 import { Feed } from './feed.js'
 import { ContributeListStatus, queryContributeList, } from './queryContributeList.js'
 import PQueue from 'p-queue'
+import axios from 'axios'
+import { updateArticle } from './updateArticle.js'
+import { sleep } from './sleep.js'
 
 // 匹配多种日期 20190202 190202 2019.02.02 2022-01-01
 export const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/
@@ -18,12 +21,22 @@ const acPassToken = process.env.ACFUN_TOKEN as string
 const uid = process.env.ACFUN_UID as string
 const cookie = `acPasstoken=${acPassToken}; auth_key=${uid}; `
 
+const options = {
+  timeout: 10000,
+  headers: {
+    cookie,
+    'host': 'member.acfun.cn',
+    'origin': 'member.acfun.cn',
+    'content-type': 'application/x-www-form-urlencoded',
+  }
+}
+
 async function main () {
   const queue = new PQueue({ autoStart: true, concurrency: 8 })
   // 获取一页的数据长度，和total总数
   const { list: feeds, total } = await queryContributeList(
     uid,
-    cookie,
+    axios.create(options),
     0,
     ContributeListStatus.all,
   )
@@ -33,7 +46,7 @@ async function main () {
   for (let page = 0; page < totalPage; page++) {
     queue.add(() => queryContributeList(
       uid,
-      cookie,
+      axios.create(options),
       page,
       ContributeListStatus.all,
     )).then(res => {
@@ -52,6 +65,12 @@ async function main () {
     '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
     '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
     '全部视频': list,
+  }
+  const articles: { [key: string]: number } = {
+    '综艺玩很大': 35347096,
+    '综艺大热门': 35422683,
+    '小明星大跟班': 35650980,
+    '小姐不熙娣': 35639119,
   }
   const time = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
@@ -76,11 +95,11 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
 
   console.log('生成README.md文件')
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), readme_md)
-
-  Object.keys(categories).forEach(key => {
+  for (let key in categories) {
     // const html = [`<h2>此列表在 ${time} 自动生成</h2>`]
-    const text = [`此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频\n\n`]
-    const markdown = [`此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频\n\n`]
+    const title = `此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频`
+    const text = [title + '\n\n']
+    const markdown = [title + '\n\n']
     let list: Feed[] = []
     const other: Feed[] = []
     if (key == '全部视频') {
@@ -112,7 +131,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
       })
     }
     let page: number | null
-    categories[key] = [...list, ...other];
+    categories[key] = [...list, ...other]
     categories[key].forEach((feed, index) => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
@@ -125,7 +144,17 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown.join('\n'))
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text.join('\n'))
     // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html.join('\n'))
-  })
+
+    // if (articles[key]) {
+    //   await sleep(10000)
+    //   await updateArticle({
+    //     axios: axios.create(options),
+    //     articleId: articles[key]!,
+    //     title: `${key} 全集在线看【已按日期排序】 ${categories[key].length} 个视频`,
+    //     content: [title, '<br>', '<br>', ...categories[key].map(feed => feed.toAcfunArticle(key))] as string[],
+    //   })
+    // }
+  }
 
   console.log('git status:',
     execSync(`cd ${acfunVideoIndexDir} && git status -s`).toString())
@@ -150,6 +179,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
 
   log = execSync(`cd ${acfunVideoIndexDir} && git push`)
   console.log('git push', log.toString())
+
 }
 
 main()
