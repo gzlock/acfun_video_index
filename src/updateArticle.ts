@@ -28,6 +28,8 @@ export async function updateArticle ({
   // console.log('提交数据', article['content'])
   params = toURLSearchParams(article)
 
+  // console.log(params.get('body')!.toString())
+
   const updateRes =
     // await axios.post('https://member.acfun.cn/article/api/updateArticle', params)
     await pRetry(() => axios.post('https://member.acfun.cn/article/api/updateArticle', params), { retries: 5 })
@@ -35,8 +37,8 @@ export async function updateArticle ({
 
   fs.writeFileSync(`./${articleId}.json`, JSON.stringify(article, null, 2))
   fs.writeFileSync(`./${articleId}.txt`, params.toString())
-
-
+  //
+  //
   // await axios.post('https://www.acfun.cn/articlepreview', params, {
   //   headers: {
   //     host: 'www.acfun.cn',
@@ -48,16 +50,17 @@ export async function updateArticle ({
 
 const toURLSearchParams = (data: any): URLSearchParams => {
   const params = new URLSearchParams()
-  const body = encodeURIComponent(JSON.stringify({
+  const body = JSON.stringify({
     bodyList: [{
-      txt: encodeURIComponent(htmlEntities(data['content']!)),
       orderId: '',
       title: '',
+      txt: encodeURIComponent(htmlEntities(data['content']!)),
+      desc: '',
     }]
-  }))
+  })
   params.append('title', data['title']!)
-  params.append('description', data['description']!)
-  params.append('typeId', data['typeId']!)
+  params.append('description', data['description'] ?? '')
+  // params.append('typeId', data['typeId']!)
   params.append('detail', body)
   // params.append('body', body)
   params.append('tagNames', JSON.stringify(data['tagList']!))
@@ -72,7 +75,7 @@ const toURLSearchParams = (data: any): URLSearchParams => {
 
 function htmlEntities (str: string): string {
   return str.replace(/&/g, '&amp;')
-    // .replace(/</g, '&lt;')
-    // .replace(/>/g, '&gt;')
-    // .replace(/"/g, '&quot;')
+  // .replace(/</g, '&lt;')
+  // .replace(/>/g, '&gt;')
+  // .replace(/"/g, '&quot;')
 }
