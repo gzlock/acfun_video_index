@@ -2,6 +2,7 @@ import { AxiosInstance } from 'axios'
 import pRetry from 'p-retry'
 import { Feed } from './feed.js'
 import { ContributeList } from './types.js'
+import { print } from './index'
 
 export enum ContributeListStatus {
   all,
@@ -24,7 +25,7 @@ export function queryContributeList (
   status: ContributeListStatus,
 ): Promise<{ page: any, list: Feed[], total: number }> {
   page = page >= 0 ? page : 0
-  console.log('正在读取', page, '页')
+  print('正在读取', page, '页')
   return pRetry(() => axios.post<ContributeList>(
     'https://member.acfun.cn/list/api/queryContributeList',
     `pcursor=${page}&resourceType=2&sortType=3&authorId=${authorId}&status=${status}`).then(res => {

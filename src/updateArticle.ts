@@ -13,7 +13,7 @@ export async function updateArticle ({
   const referer = `https://member.acfun.cn/edit-article/${articleId}`
 
   axios.defaults.headers.common['referer'] = referer
-  console.log('更新A站文章', referer)
+  console.log('更新A站文章', referer, title)
 
   let params = new URLSearchParams()
   params.append('articleId', articleId + '')

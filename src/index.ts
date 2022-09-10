@@ -145,15 +145,18 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
     fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text.join('\n'))
     // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html.join('\n'))
 
-    // if (articles[key]) {
-    //   await sleep(10000)
-    //   await updateArticle({
-    //     axios: axios.create(options),
-    //     articleId: articles[key]!,
-    //     title: `${key} 全集在线看【已按日期排序】 ${categories[key].length} 个视频`,
-    //     content: [title, '<br>', '<br>', ...categories[key].map(feed => feed.toAcfunArticle(key))] as string[],
-    //   })
-    // }
+    /**
+     * 更新Acfun文章
+     */
+    if (articles[key]) {
+      await sleep(1000)
+      await updateArticle({
+        axios: axios.create(options),
+        articleId: articles[key]!,
+        title: `${key} 全集在线看【已按日期排序】 ${categories[key].length} 个视频`,
+        content: [title, '<br>', '<br>', ...categories[key].map(feed => feed.toAcfunArticle(key))] as string[],
+      })
+    }
   }
 
   console.log('git status:',
@@ -206,4 +209,10 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
     console.log(`生成${key}.json文件`)
     fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${key}.json`), JSON.stringify(categories[key].map(feed => feed.toJSON(key))))
   }
+}
+
+export function print (...args: any[]) {
+  process.stdout.clearLine(0)
+  process.stdout.cursorTo(0)
+  process.stdout.write(args.join(' '))
 }
