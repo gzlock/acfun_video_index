@@ -2,7 +2,7 @@ import { AxiosInstance } from 'axios'
 import pRetry from 'p-retry'
 import { Feed } from './feed.js'
 import { ContributeList } from './types.js'
-import { print } from './index'
+import { print } from './index.js'
 
 export enum ContributeListStatus {
   all,
