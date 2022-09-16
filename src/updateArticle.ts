@@ -35,8 +35,8 @@ export async function updateArticle ({
     await pRetry(() => axios.post('https://member.acfun.cn/article/api/updateArticle', params), { retries: 5 })
   console.log('更新结果', updateRes.data)
 
-  fs.writeFileSync(`./${articleId}.json`, JSON.stringify(article, null, 2))
-  fs.writeFileSync(`./${articleId}.txt`, params.toString())
+  // fs.writeFileSync(`./${articleId}.json`, JSON.stringify(article, null, 2))
+  // fs.writeFileSync(`./${articleId}.txt`, params.toString())
   //
   //
   // await axios.post('https://www.acfun.cn/articlepreview', params, {
