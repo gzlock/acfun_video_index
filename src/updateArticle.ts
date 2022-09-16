@@ -34,18 +34,6 @@ export async function updateArticle ({
     // await axios.post('https://member.acfun.cn/article/api/updateArticle', params)
     await pRetry(() => axios.post('https://member.acfun.cn/article/api/updateArticle', params), { retries: 5 })
   console.log('更新结果', updateRes.data)
-
-  // fs.writeFileSync(`./${articleId}.json`, JSON.stringify(article, null, 2))
-  // fs.writeFileSync(`./${articleId}.txt`, params.toString())
-  //
-  //
-  // await axios.post('https://www.acfun.cn/articlepreview', params, {
-  //   headers: {
-  //     host: 'www.acfun.cn',
-  //     origin: 'https://member.acfun.cn',
-  //     referer: 'https://member.acfun.cn',
-  //   }
-  // }).then(res => fs.writeFileSync('preview.html', res.data))
 }
 
 const toURLSearchParams = (data: any): URLSearchParams => {
