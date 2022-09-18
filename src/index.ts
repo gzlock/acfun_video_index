@@ -9,6 +9,7 @@ import PQueue from 'p-queue'
 import axios from 'axios'
 import { updateArticle } from './updateArticle.js'
 import { sleep } from './sleep.js'
+import * as readline from 'readline'
 
 // 匹配多种日期 20190202 190202 2019.02.02 2022-01-01
 export const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/
@@ -212,7 +213,6 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
 }
 
 export function print (...args: any[]) {
-  process.stdout.clearLine(0)
-  process.stdout.cursorTo(0)
+  readline.cursorTo(process.stdout, 0);
   process.stdout.write(args.join(' '))
 }
