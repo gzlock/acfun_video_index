@@ -97,7 +97,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), readme_md)
   for (let key in categories) {
     // const html = [`<h2>此列表在 ${time} 自动生成</h2>`]
-    const title = `此列表在 ${time} 自动生成，一共 ${categories[key].length} 个视频`
+    const title = `此列表在 ${time} 生成，一共 ${categories[key].length} 个视频`
     const text = [title + '\n\n']
     const markdown = [title + '\n\n']
     let list: Feed[] = []
