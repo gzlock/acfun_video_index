@@ -10,6 +10,11 @@ import axios from 'axios'
 import { updateArticle } from './updateArticle.js'
 import { sleep } from './sleep.js'
 import * as readline from 'readline'
+import utc from 'dayjs/plugin/utc.js'
+import timezone from 'dayjs/plugin/timezone.js'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 // 匹配多种日期 20190202 190202 2019.02.02 2022-01-01
 export const matchDate = /\d{2,4}[.-]?\d{2}[.-]?\d{2}/
@@ -73,7 +78,7 @@ async function main () {
     '小明星大跟班': 35650980,
     '小姐不熙娣': 35639119,
   }
-  const time = dayjs().format('YYYY-MM-DD HH:mm:ss')
+  const time = dayjs().tz('PRC').format('YYYY-MM-DD HH:mm:ss')
 
   let readme_md = `此列表在 ${time} 自动生成\n\n
 由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n
@@ -213,6 +218,6 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
 }
 
 export function print (...args: any[]) {
-  readline.cursorTo(process.stdout, 0);
+  readline.cursorTo(process.stdout, 0)
   process.stdout.write(args.join(' '))
 }
