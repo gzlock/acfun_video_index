@@ -70,6 +70,7 @@ async function main () {
     '小姐不熙娣': list.filter(feed => feed.title.includes('小姐不熙娣')),
     '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
     '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
+    '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
     '全部视频': list,
   }
   const articles: { [key: string]: number } = {
@@ -96,7 +97,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
   }
 
   let log: any = execSync(
-    `cd ${outputDir} && git clone --depth=1 https://gzlock:${process.env.AZURE_TOKEN}@dev.azure.com/gzlock/acfun_video_index/_git/acfun_video_index`)
+    `cd ${outputDir} && git clone https://gzlock:${process.env.AZURE_TOKEN}@dev.azure.com/gzlock/acfun_video_index/_git/acfun_video_index`)
   console.log('从Gitee克隆仓库', log.toString())
 
   console.log('生成README.md文件')
@@ -204,9 +205,9 @@ async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) 
     new: lodash.take(list, 10).splice(0, 10), // 最新的视频
   }
 
-  fs.rmSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
-
-  fs.mkdirSync(path.join(acfunVideoIndexDir, 'json'))
+  // fs.rmSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
+  //
+  try {fs.mkdirSync(path.join(acfunVideoIndexDir, 'json'))} catch (e) { }
 
   console.log('生成main.json文件')
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', 'main.json'), JSON.stringify(main))
