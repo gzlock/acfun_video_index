@@ -71,6 +71,7 @@ async function main () {
     '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
     '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
     '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
+    'Jacky Show': list.filter(feed => /jacky show/i.test(feed.title)),
     '全部视频': list,
   }
   const articles: { [key: string]: number } = {
@@ -78,6 +79,7 @@ async function main () {
     '综艺大热门': 35422683,
     '小明星大跟班': 35650980,
     '小姐不熙娣': 35639119,
+    'Jacky Show': 37608026,
   }
   const time = dayjs().tz('PRC').format('YYYY-MM-DD HH:mm:ss')
 
@@ -118,6 +120,20 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
         list[number] = feed
       })
       list = list.reverse()
+    } else if (key == 'Jacky Show') {
+      // 有没有包含ep来区分
+      categories[key].forEach(feed => {
+        const ep = /ep\s*\d+/i.test(feed.title)
+        if (ep)
+          list.push(feed)
+        else
+          other.push(feed)
+      })
+      list = list.sort((a, b) => {
+        const epA = parseInt(a.title.match(/ep(\d+)/i)![1])
+          , epB = parseInt(b.title.match(/ep(\d+)/i)![1])
+        return epA - epB
+      })
     } else {
       // 其余按日期排序
       categories[key].forEach(feed => {
