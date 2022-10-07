@@ -68,10 +68,10 @@ async function main () {
     '小明星大跟班': list.filter(feed => feed.title.includes('小明星大跟班')),
     '天王到你家': list.filter(feed => feed.title.includes('天王到你家')),
     '小姐不熙娣': list.filter(feed => feed.title.includes('小姐不熙娣')),
-    '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
-    '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
-    '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
-    'Jacky Show': list.filter(feed => /jacky show/i.test(feed.title)),
+    // '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
+    // '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
+    // '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
+    // 'Jacky Show': list.filter(feed => /jacky show/i.test(feed.title)),
     '综艺旗舰': list.filter(feed => /综艺旗舰/.test(feed.title)),
     '全部视频': list,
   }
@@ -80,7 +80,6 @@ async function main () {
     '综艺大热门': 35422683,
     '小明星大跟班': 35650980,
     '小姐不熙娣': 35639119,
-    '综艺旗舰': 39100279,
   }
   const time = dayjs().tz('PRC').format('YYYY-MM-DD HH:mm:ss')
 
