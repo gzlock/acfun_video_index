@@ -72,6 +72,7 @@ async function main () {
     '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
     '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
     'Jacky Show': list.filter(feed => /jacky show/i.test(feed.title)),
+    '综艺旗舰': list.filter(feed => /综艺旗舰/.test(feed.title)),
     '全部视频': list,
   }
   const articles: { [key: string]: number } = {
@@ -79,7 +80,7 @@ async function main () {
     '综艺大热门': 35422683,
     '小明星大跟班': 35650980,
     '小姐不熙娣': 35639119,
-    'Jacky Show': 37608026,
+    '综艺旗舰': 39100279,
   }
   const time = dayjs().tz('PRC').format('YYYY-MM-DD HH:mm:ss')
 
@@ -176,7 +177,7 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
       await updateArticle({
         axios: axios.create(options),
         articleId: articles[key]!,
-        title: `${key} 全集在线看【已按日期排序】 ${categories[key].length} 个视频`,
+        title: `${key} 全集在线看 ${categories[key].length} 个视频`,
         content: [title, '<br>', '<br>', ...categories[key].map(feed => feed.toAcfunArticle(key))] as string[],
       })
     }
