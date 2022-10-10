@@ -72,7 +72,8 @@ async function main () {
     // '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
     // '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
     // 'Jacky Show': list.filter(feed => /jacky show/i.test(feed.title)),
-    '综艺旗舰': list.filter(feed => /综艺旗舰/.test(feed.title)),
+    // '综艺旗舰': list.filter(feed => /综艺旗舰/.test(feed.title)),
+    '11点热吵店': list.filter(feed => /11点热吵店/.test(feed.title)),
     '全部视频': list,
   }
   const articles: { [key: string]: number } = {
@@ -80,6 +81,7 @@ async function main () {
     '综艺大热门': 35422683,
     '小明星大跟班': 35650980,
     '小姐不熙娣': 35639119,
+    '11点热吵店': 39129480,
   }
   const time = dayjs().tz('PRC').format('YYYY-MM-DD HH:mm:ss')
 
