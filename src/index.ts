@@ -37,6 +37,28 @@ const options = {
   }
 }
 
+class CategoryForFeed {
+  name: string
+  feeds: Feed[]
+  isEnd: boolean
+  articleId?: number | undefined
+  reorder?: (feeds: Feed[]) => Feed[] | undefined
+
+  constructor ({
+    name,
+    feeds,
+    isEnd,
+    articleId = undefined,
+    reorder = undefined,
+  }: { name: string, feeds: Feed[], isEnd: boolean, articleId?: number, reorder?: (feeds: Feed[]) => Feed[] }) {
+    this.name = name
+    this.feeds = feeds
+    this.isEnd = isEnd
+    this.articleId = articleId
+    this.reorder = reorder
+  }
+}
+
 async function main () {
   const queue = new PQueue({ autoStart: true, concurrency: 8 })
   // 获取一页的数据长度，和total总数
@@ -49,6 +71,7 @@ async function main () {
   const list: Feed[] = []
   // 总页数，如果有小数自动+1
   const totalPage = Math.ceil(total / feeds.length)
+  const lastVideos: Feed[] = []
   for (let page = 0; page < totalPage; page++) {
     queue.add(() => queryContributeList(
       uid,
@@ -57,41 +80,111 @@ async function main () {
       ContributeListStatus.all,
     )).then(res => {
       list.push(...res.list)
+      if (page == 0)
+        lastVideos.push(...res.list)
     })
   }
   await queue.onIdle()
 
   console.log('视频总数', list.length)
-  const categories: { [key: string]: Feed[] } = {
-    '综艺玩很大': list.filter(feed => feed.title.includes('玩很大')),
-    '综艺大热门': list.filter(feed => feed.title.includes('大热门')),
-    '小明星大跟班': list.filter(feed => feed.title.includes('小明星大跟班')),
-    '天王到你家': list.filter(feed => feed.title.includes('天王到你家')),
-    '小姐不熙娣': list.filter(feed => feed.title.includes('小姐不熙娣')),
-    // '来吧！营业中': list.filter(feed => feed.title.includes('营业中')),
-    // '料理之王3': list.filter(feed => feed.title.includes('料理之王')),
-    // '開動吧！漂亮姐姐': list.filter(feed => feed.title.includes('開動吧漂亮姐姐')),
-    // 'Jacky Show': list.filter(feed => /jacky show/i.test(feed.title)),
-    // '综艺旗舰': list.filter(feed => /综艺旗舰/.test(feed.title)),
-    '11点热吵店': list.filter(feed => /11点热吵店/.test(feed.title)),
-    '全部视频': list,
-  }
-  const articles: { [key: string]: number } = {
-    '综艺玩很大': 35347096,
-    '综艺大热门': 35422683,
-    '小明星大跟班': 35650980,
-    '小姐不熙娣': 35639119,
-    '11点热吵店': 39129480,
-  }
+  const categories: CategoryForFeed[] = [
+    new CategoryForFeed({
+      name: '全部视频',
+      isEnd: false,
+      feeds: list,
+      reorder: (feeds) => feeds
+    }),
+    new CategoryForFeed({
+      name: '综艺玩很大',
+      isEnd: false,
+      articleId: 35347096,
+      feeds: list.filter(feed => feed.title.startsWith('综艺玩很大') || feed.title.includes('玩很大'))
+    }),
+    new CategoryForFeed({
+      name: '综艺大热门',
+      isEnd: false,
+      articleId: 35422683,
+      feeds: list.filter(feed => feed.title.startsWith('综艺大热门') || feed.title.startsWith('大热门'))
+    }),
+    new CategoryForFeed({
+      name: '小明星大跟班',
+      isEnd: false,
+      articleId: 35650980,
+      feeds: list.filter(feed => feed.title.startsWith('小明星大跟班') || feed.title.startsWith('小大'))
+    }),
+    new CategoryForFeed({
+      name: '小姐不熙娣',
+      isEnd: false,
+      articleId: 35639119,
+      feeds: list.filter(feed => feed.title.startsWith('小姐不熙娣') || feed.title.startsWith('不熙娣'))
+    }),
+    new CategoryForFeed({
+      name: '11点热吵店',
+      isEnd: false,
+      articleId: 39129480,
+      feeds: list.filter(feed => feed.title.startsWith('11点热吵店') || feed.title.startsWith('热吵店'))
+    }),
+    new CategoryForFeed({
+      name: '来吧！营业中',
+      isEnd: true,
+      feeds: list.filter(feed => feed.title.startsWith('来吧！营业中'))
+    }),
+    new CategoryForFeed({
+      name: '料理之王3',
+      isEnd: true,
+      feeds: list.filter(feed => feed.title.startsWith('料理之王3')),
+      reorder: list => {
+        const result: Feed[] = []
+        // 料理之王按集数排序，集数从1开始，所以-1
+        list.forEach(feed => {
+          const number = parseInt(feed.title.match(/ep(\d+)/i)![1]) - 1
+          result[number] = feed
+        })
+        return result.reverse()
+      }
+    }),
+    new CategoryForFeed({
+      name: '開動吧！漂亮姐姐',
+      isEnd: true,
+      feeds: list.filter(feed => feed.title.startsWith('開動吧！漂亮姐姐'))
+    }),
+    new CategoryForFeed({
+      name: 'Jacky Show',
+      isEnd: true,
+      feeds: list.filter(feed => /jacky show/i.test(feed.title)),
+      reorder: (feeds) => {
+        let list: Feed[] = []
+        const other: Feed[] = []
+        // 有没有包含ep来区分
+        feeds.forEach(feed => {
+          const ep = /ep\s*\d+/i.test(feed.title)
+          if (ep)
+            list.push(feed)
+          else
+            other.push(feed)
+        })
+        list = list.sort((a, b) => {
+          const epA = parseInt(a.title.match(/ep(\d+)/i)![1])
+            , epB = parseInt(b.title.match(/ep(\d+)/i)![1])
+          return epA - epB
+        })
+        return [...list, ...other]
+      },
+    }),
+    new CategoryForFeed({
+      name: '综艺旗舰',
+      isEnd: true,
+      feeds: list.filter(feed => feed.title.includes('综艺旗舰'))
+    }),
+  ]
   const time = dayjs().tz('PRC').format('YYYY-MM-DD HH:mm:ss')
 
   let readme_md = `此列表在 ${time} 自动生成\n\n
-由于自动化原因，源代码迁移到了https://github.com/gzlock/acfun_video_index\n\n
 分类列表：\n\n
-${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个视频)](./${encodeURI(key)}.md)`).join('\n\n')}\n\n
+${categories.map(category => `- [${category.name} (${category.feeds.length} 个视频)](./${encodeURI(category.name)}.md)`).join('\n\n')}\n\n
 # 最新上传的10个视频：\n\n`
 
-  lodash.take(list, 10).forEach(feed => readme_md += feed.toMarkDown())
+  lastVideos.forEach(feed => readme_md += feed.toMarkDown())
 
   try {
     execSync(`rm -rf ${outputDir}`)
@@ -106,44 +199,24 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
 
   console.log('生成README.md文件')
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'README.md'), readme_md)
-  for (let key in categories) {
+  for (let category of categories) {
     // const html = [`<h2>此列表在 ${time} 自动生成</h2>`]
-    const title = `此列表在 ${time} 生成，一共 ${categories[key].length} 个视频`
+    const title = `此列表在 ${time} 生成，一共 ${category.feeds.length} 个视频`
     const text = [title + '\n\n']
     const markdown = [title + '\n\n']
-    let list: Feed[] = []
-    const other: Feed[] = []
-    if (key == '全部视频') {
-      list = categories[key]
-    } else if (key == '料理之王3') {
-      // 料理之王按集数排序，集数从1开始，所以-1
-      categories[key].forEach(feed => {
-        const number = parseInt(feed.title.match(/ep(\d+)/i)![1]) - 1
-        list[number] = feed
-      })
-      list = list.reverse()
-    } else if (key == 'Jacky Show') {
-      // 有没有包含ep来区分
-      categories[key].forEach(feed => {
-        const ep = /ep\s*\d+/i.test(feed.title)
-        if (ep)
-          list.push(feed)
-        else
-          other.push(feed)
-      })
-      list = list.sort((a, b) => {
-        const epA = parseInt(a.title.match(/ep(\d+)/i)![1])
-          , epB = parseInt(b.title.match(/ep(\d+)/i)![1])
-        return epA - epB
-      })
+    let list: Feed[]
+    if (category.reorder) {
+      list = category.reorder(category.feeds)!
     } else {
       // 其余按日期排序
-      categories[key].forEach(feed => {
+      let tempList: Feed[] = []
+      const otherList: Feed[] = []
+      category.feeds.forEach(feed => {
         const test = matchDate.test(feed.title)
-        if (test) list.push(feed)
-        else other.push(feed)
+        if (test) tempList.push(feed)
+        else otherList.push(feed)
       })
-      list = list.sort((a, b) => {
+      tempList = tempList.sort((a, b) => {
         const aMatch = a.title.match(matchDate)
         const bMatch = b.title.match(matchDate)
         if (aMatch && bMatch) {
@@ -154,43 +227,43 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
         }
         return 1
       })
+      list = [...tempList, ...otherList]
     }
     let page: number | null
-    categories[key] = [...list, ...other]
-    categories[key].forEach((feed, index) => {
+    list.forEach((feed) => {
       // html.push(feed.toHtml())
       markdown.push(feed.toMarkDown())
-      if (key == '全部视频' && page != feed.page) {
+      if (category.name == '全部视频' && page != feed.page) {
         page = feed.page
         text.push(`第${page + 1}页`)
       }
-      text.push(feed.toTxt(key))
+      text.push(feed.toTxt(category.name))
     })
-    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.md`), markdown.join('\n'))
-    fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.txt`), text.join('\n'))
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${category.name}.md`), markdown.join('\n'))
+    fs.writeFileSync(path.join(acfunVideoIndexDir, `${category.name}.txt`), text.join('\n'))
+    fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${category.name}.json`), JSON.stringify(list.map(feed => feed.toJSON(category.name))))
     // fs.writeFileSync(path.join(acfunVideoIndexDir, `${key}.html`), html.join('\n'))
 
     /**
      * 更新Acfun文章
      */
-    if (articles[key]) {
+    if (category.articleId) {
       await sleep(1000)
       await updateArticle({
         axios: axios.create(options),
-        articleId: articles[key]!,
-        title: `${key} 全集在线看 ${categories[key].length} 个视频`,
-        content: [title, '<br>', '<br>', ...categories[key].map(feed => feed.toAcfunArticle(key))] as string[],
+        articleId: category.articleId,
+        title: `${category.name} 全集在线看 ${category.feeds.length} 个视频`,
+        content: [title, '<br>', '<br>', ...list.map(feed => feed.toAcfunArticle(category.name))] as string[],
       })
     }
   }
+  await outputMainJson(categories, lastVideos)
 
   console.log('git status:',
     execSync(`cd ${acfunVideoIndexDir} && git status -s`).toString())
 
   execSync(`cd ${acfunVideoIndexDir} && git config user.name ${process.env.AZURE_USERNAME}`)
   execSync(`cd ${acfunVideoIndexDir} && git config user.email ${process.env.AZURE_EMAIL}`)
-
-  await outputJSON(list, categories)
 
   await new Promise((resolve, reject) => {
     exec(
@@ -210,33 +283,22 @@ ${Object.keys(categories).map(key => `- [${key} (${categories[key].length} 个�
 
 }
 
-main()
-
-async function outputJSON (list: Feed[], categories: { [key: string]: Feed[] }) {
-  const keys = Object.keys(categories)
+async function outputMainJson (categories: CategoryForFeed[], lastVideos: Feed[]) {
   const main = {
     createdAt: new Date(),
-    list: keys.reduce<any[]>((data, key) => {
-      data.push({ name: `${key}（${categories[key].length}个视频）`, file: `${key}.json` })
-      return data
-    }, []), // 视频列表
-    new: lodash.take(list, 10).splice(0, 10), // 最新的视频
+    list: categories.map(category => ({
+      name: `${category.name}（${category.feeds.length}个视频）`,
+      file: `${category.name}.json`
+    })), // 视频列表
+    new: lastVideos.map(feed => feed.toJSON()), // 最新的视频
   }
-
-  // fs.rmSync(path.join(acfunVideoIndexDir, 'json'), { recursive: true })
-  //
-  try {fs.mkdirSync(path.join(acfunVideoIndexDir, 'json'))} catch (e) { }
-
   console.log('生成main.json文件')
   fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', 'main.json'), JSON.stringify(main))
-
-  for (let key of keys) {
-    console.log(`生成${key}.json文件`)
-    fs.writeFileSync(path.join(acfunVideoIndexDir, 'json', `${key}.json`), JSON.stringify(categories[key].map(feed => feed.toJSON(key))))
-  }
 }
 
 export function print (...args: any[]) {
   readline.cursorTo(process.stdout, 0)
   process.stdout.write(args.join(' '))
 }
+
+main()
